@@ -84,7 +84,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
   * there is at least one gamepad attached
   * the timer is enabled (for an Autonomous OpMode)
 * Updated AprilTag Library for DECODE. Notably, getCurrentGameTagLibrary() now returns DECODE tags.
-  * Since the AprilTags on the Obelisk should not be used for localization, the ConceptAprilTagLocalization samples only use those tags without the name 'Obelisk' in them.
+  * Since the AprilTags on the Obelisk should not be used for localization, the org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.testingOpModes.ConceptAprilTagLocalization samples only use those tags without the name 'Obelisk' in them.
 * OctoQuad I2C driver updated to support firmware v3.x 
   * Adds support for odometry localizer on MK2 hardware revision
   * Adds ability to track position for an absolute encoder across multiple rotations
