@@ -15,7 +15,8 @@ public class Constants {
             .leftFrontMotorName("frontL")
             .rightFrontMotorName("frontR")
             .leftRearMotorName("rearL")
-            .rightRearMotorName("rearR")
+            .rightRearMotorName("rearR" +
+                    "")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
