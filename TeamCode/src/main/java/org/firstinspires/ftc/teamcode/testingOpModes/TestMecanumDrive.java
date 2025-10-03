@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import java.util.function.Supplier;
 
 @Configurable
-@TeleOp(name = "Test Mecanum", group = "testing")
+@TeleOp(name = "Test Mecanum don't use", group = "testing")
 public class TestMecanumDrive extends OpMode {
     private Follower follower;
     public static Pose startingPose;
