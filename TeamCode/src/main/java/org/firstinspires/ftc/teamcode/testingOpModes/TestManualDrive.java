@@ -166,9 +166,12 @@ public class TestManualDrive extends LinearOpMode {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
                 if (!detection.metadata.name.contains("Obelisk")) {
                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
-                            detection.robotPose.getPosition().x,
-                            detection.robotPose.getPosition().y,
-                            detection.robotPose.getPosition().z));
+//                            detection.robotPose.getPosition().x,
+//                            detection.robotPose.getPosition().y,
+//                            detection.robotPose.getPosition().z));
+                            detection.ftcPose.x,
+                            detection.ftcPose.y,
+                            detection.ftcPose.z));
                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
                             detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
                             detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
