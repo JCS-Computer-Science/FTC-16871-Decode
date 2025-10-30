@@ -38,6 +38,7 @@ public class TestManualDrive extends LinearOpMode {
     private Servo servo1 = null;
 
     public static final double SHOOTER_INTERVAL = 0.2;
+    public static final double AUTO_TURN = 0.3;
 
 
     @Override
@@ -74,7 +75,21 @@ public class TestManualDrive extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-
+//aim
+            if (gamepad1.a) {
+                List<AprilTagDetection> detect = aprilTag.getDetections();
+                for (AprilTagDetection dect : detect){
+                    if (dect.metadata != null){
+                        if (!dect.metadata.name.contains("Obelisk")){
+                            if(dect.ftcPose.x > 0){
+                                yaw = AUTO_TURN;
+                            }else if(dect.ftcPose.x < 0){
+                                yaw = -AUTO_TURN;
+                            }
+                        }
+                    }
+                }
+            }
             double frontLeftPower  = axial + lateral + yaw;
             double frontRightPower = axial - lateral - yaw;
             double backLeftPower   = axial - lateral + yaw;
