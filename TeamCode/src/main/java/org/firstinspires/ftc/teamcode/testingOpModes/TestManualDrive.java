@@ -75,7 +75,7 @@ public class TestManualDrive extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-//aim
+            //aim at apriltag
             if (gamepad1.a) {
                 List<AprilTagDetection> detect = aprilTag.getDetections();
                 for (AprilTagDetection dect : detect){
@@ -90,6 +90,7 @@ public class TestManualDrive extends LinearOpMode {
                     }
                 }
             }
+
             double frontLeftPower  = axial + lateral + yaw;
             double frontRightPower = axial - lateral - yaw;
             double backLeftPower   = axial - lateral + yaw;
