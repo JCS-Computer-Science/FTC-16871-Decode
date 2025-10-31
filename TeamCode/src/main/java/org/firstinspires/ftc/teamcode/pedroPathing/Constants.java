@@ -28,6 +28,8 @@ public class Constants {
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
             .forwardEncoder_HardwareMapName("leftFront")
             .strafeEncoder_HardwareMapName("rightRear")
+            .forwardPodY(6)
+            .strafePodX(-7)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
@@ -37,6 +39,7 @@ public class Constants {
             );
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
+                .twoWheelLocalizer(localizerConstants)
                 .mecanumDrivetrain(driveConstants)
                 .pathConstraints(pathConstraints)
                 .build();
