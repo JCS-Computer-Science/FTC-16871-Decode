@@ -83,10 +83,14 @@ public class TestManualDrive extends LinearOpMode {
                         if (!dect.metadata.name.contains("Obelisk")){
                             if(dect.ftcPose.x > 0){
                                 yaw = AUTO_TURN;
+                                telemetry.addData("Auto Aim", "Turning right");
                             }else if(dect.ftcPose.x < 0){
                                 yaw = -AUTO_TURN;
+                                telemetry.addData("Auto Aim", "Turning left");
                             }
                         }
+                    }else{
+                        telemetry.addData("Auto Aim", "No target found");
                     }
                 }
             }
@@ -124,6 +128,16 @@ public class TestManualDrive extends LinearOpMode {
                 shooterToggle = true;
             } else if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                 shooterToggle = false;
+            }
+
+            if (gamepad1.right_trigger > 0.5){
+                shooterPower = 1;
+                shooter.setPower(shooterPower);
+            }
+
+            if (gamepad1.left_trigger > 0.5){
+                shooterPower = 0;
+                shooter.setPower(shooterPower);
             }
 
             //servo
