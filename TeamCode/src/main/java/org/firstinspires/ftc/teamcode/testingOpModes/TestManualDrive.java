@@ -35,7 +35,7 @@ public class TestManualDrive extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     private DcMotor shooter = null;
-    private Servo servo1 = null;
+    private Servo intake = null;
 
     public static final double SHOOTER_INTERVAL = 0.2;
     public static final double AUTO_TURN = 0.3;
@@ -60,7 +60,7 @@ public class TestManualDrive extends LinearOpMode {
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         shooter.setDirection(DcMotor.Direction.REVERSE);
         //initialize servo(s)
-        servo1 = hardwareMap.get(Servo.class, "servo1");
+        intake = hardwareMap.get(Servo.class, "intake");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -140,7 +140,14 @@ public class TestManualDrive extends LinearOpMode {
                 shooter.setPower(shooterPower);
             }
 
-            //servo
+            //intake
+            if (gamepad1.dpad_down){
+                intake.setPosition(1);
+            }else if (gamepad1.dpad_up){
+                intake.setPosition(0);
+            }else if (gamepad1.dpad_right){
+                intake.setPosition(0.5);
+            };
 
             //telemetry
             telemetryAprilTag();
