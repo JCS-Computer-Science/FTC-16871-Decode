@@ -20,6 +20,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+
 @TeleOp(name="test manual drive", group="testing")
 public class TestManualDrive extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -44,22 +45,18 @@ public class TestManualDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
         initAprilTag();
-        //variables
         boolean shooterToggle = false;
         double shooterPower = 0;
-        //initialize motors
         frontLeftDrive = hardwareMap.get(DcMotor.class, "frontL");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontR");
         backRightDrive = hardwareMap.get(DcMotor.class, "backR");
         shooter = hardwareMap.get(DcMotor.class, "shooter");
-        //set motor directions
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         shooter.setDirection(DcMotor.Direction.REVERSE);
-        //initialize servo(s)
         intake = hardwareMap.get(Servo.class, "intake");
 
         telemetry.addData("Status", "Initialized");
@@ -69,13 +66,11 @@ public class TestManualDrive extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
-            //drive
             double max;
 
             double axial   = -gamepad1.left_stick_y;
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-            //aim at apriltag
             if (gamepad1.a) {
                 List<AprilTagDetection> detect = aprilTag.getDetections();
                 for (AprilTagDetection dect : detect){
@@ -116,8 +111,6 @@ public class TestManualDrive extends LinearOpMode {
             backLeftDrive.setPower(backLeftPower);
             backRightDrive.setPower(backRightPower);
 
-            //shooter
-
             if (gamepad1.right_bumper && !shooterToggle && shooterPower < 1) {
                 shooterPower += SHOOTER_INTERVAL;
                 shooter.setPower(shooterPower);
@@ -140,7 +133,6 @@ public class TestManualDrive extends LinearOpMode {
                 shooter.setPower(shooterPower);
             }
 
-            //intake
             if (gamepad1.dpad_down){
                 intake.setPosition(1);
             }else if (gamepad1.dpad_up){
@@ -149,7 +141,6 @@ public class TestManualDrive extends LinearOpMode {
                 intake.setPosition(0.5);
             };
 
-            //telemetry
             telemetryAprilTag();
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
