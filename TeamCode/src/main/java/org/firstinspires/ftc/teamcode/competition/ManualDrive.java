@@ -152,7 +152,8 @@ public class ManualDrive extends LinearOpMode{
             }else if (gamepad1.dpad_left){
                 intake.setPower(1);
             };
-            //telemetry to help control the robot
+
+            //telemetry
             telemetryAprilTag();
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
@@ -162,7 +163,7 @@ public class ManualDrive extends LinearOpMode{
         }
     }
 
-    //april tag detection functions
+    //april tag functions
     private void initAprilTag() {
 
         aprilTag = new AprilTagProcessor.Builder()
