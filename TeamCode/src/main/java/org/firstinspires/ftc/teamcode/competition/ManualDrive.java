@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -33,20 +34,20 @@ public class ManualDrive extends LinearOpMode{
     public static final double SHOOTER_INTERVAL = 0.2;
 
     //apriltag/camera variables
-    private static final boolean USE_WEBCAM = true;
-    private Position cameraPosition = new Position(DistanceUnit.INCH,
-            0, 0, 0, 0);
-    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-            0, -90, 0, 0);
-    private AprilTagProcessor aprilTag;
-    private VisionPortal visionPortal;
-    public static final double AUTO_TURN = 0.3;
+//    private static final boolean USE_WEBCAM = true;
+//    private Position cameraPosition = new Position(DistanceUnit.INCH,
+//            0, 0, 0, 0);
+//    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+//            0, -90, 0, 0);
+//    private AprilTagProcessor aprilTag;
+//    private VisionPortal visionPortal;
+//    public static final double AUTO_TURN = 0.3;
 
 
     @Override
     public void runOpMode() {
 
-        initAprilTag();
+//        initAprilTag();
         //shooter variables
         boolean shooterToggle = false;
         double shooterPower = 0;
@@ -59,9 +60,9 @@ public class ManualDrive extends LinearOpMode{
         intake = hardwareMap.get(DcMotor.class, "intake");
         //directions of wheels, may need to change directions to drive properly
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         //direction of shooter
         shooter.setDirection(DcMotor.Direction.REVERSE);
 
@@ -79,24 +80,24 @@ public class ManualDrive extends LinearOpMode{
             double yaw     =  gamepad1.right_stick_x;
 
             //auto aim function, points towards certain apriltags within view
-            if (gamepad1.a) {
-                List<AprilTagDetection> detect = aprilTag.getDetections();
-                for (AprilTagDetection dect : detect){
-                    if (dect.metadata != null){
-                        if (!dect.metadata.name.contains("Obelisk")){
-                            if(dect.ftcPose.x > 0){
-                                yaw = AUTO_TURN;
-                                telemetry.addData("Auto Aim", "Turning right");
-                            }else if(dect.ftcPose.x < 0){
-                                yaw = -AUTO_TURN;
-                                telemetry.addData("Auto Aim", "Turning left");
-                            }
-                        }
-                    }else{
-                        telemetry.addData("Auto Aim", "No target found");
-                    }
-                }
-            }
+//            if (gamepad1.a) {
+//                List<AprilTagDetection> detect = aprilTag.getDetections();
+//                for (AprilTagDetection dect : detect){
+//                    if (dect.metadata != null){
+//                        if (!dect.metadata.name.contains("Obelisk")){
+//                            if(dect.ftcPose.x > 0){
+//                                yaw = AUTO_TURN;
+//                                telemetry.addData("Auto Aim", "Turning right");
+//                            }else if(dect.ftcPose.x < 0){
+//                                yaw = -AUTO_TURN;
+//                                telemetry.addData("Auto Aim", "Turning left");
+//                            }
+//                        }
+//                    }else{
+//                        telemetry.addData("Auto Aim", "No target found");
+//                    }
+//                }
+//            }
 
             //drive and turning calculations
             double frontLeftPower  = axial + lateral + yaw;
@@ -154,7 +155,7 @@ public class ManualDrive extends LinearOpMode{
             };
 
             //telemetry
-            telemetryAprilTag();
+//            telemetryAprilTag();
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
@@ -164,70 +165,70 @@ public class ManualDrive extends LinearOpMode{
     }
 
     //april tag functions
-    private void initAprilTag() {
-
-        aprilTag = new AprilTagProcessor.Builder()
-
-                .setDrawAxes(false)
-                .setDrawCubeProjection(false)
-                .setDrawTagOutline(true)
-                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                .setCameraPose(cameraPosition, cameraOrientation)
-
-                .build();
-
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
-
-        builder.enableLiveView(true);
-
-        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        builder.setAutoStopLiveView(false);
-
-        builder.addProcessor(aprilTag);
-
-        visionPortal = builder.build();
-
-        visionPortal.setProcessorEnabled(aprilTag, true);
-
-    }
-    private void telemetryAprilTag() {
-
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
-
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                if (!detection.metadata.name.contains("Obelisk")) {
-                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
-//                            detection.robotPose.getPosition().x,
-//                            detection.robotPose.getPosition().y,
-//                            detection.robotPose.getPosition().z));
-                            detection.ftcPose.x,
-                            detection.ftcPose.y,
-                            detection.ftcPose.z));
-                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
-                            detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
-                            detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
-                            detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
-                }
-            } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-            }
-        }
-
-        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-
-    }
+//    private void initAprilTag() {
+//
+//        aprilTag = new AprilTagProcessor.Builder()
+//
+//                .setDrawAxes(false)
+//                .setDrawCubeProjection(false)
+//                .setDrawTagOutline(true)
+//                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+//                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+//                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+//                .setCameraPose(cameraPosition, cameraOrientation)
+//
+//                .build();
+//
+//        VisionPortal.Builder builder = new VisionPortal.Builder();
+//
+//        if (USE_WEBCAM) {
+//            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+//        } else {
+//            builder.setCamera(BuiltinCameraDirection.BACK);
+//        }
+//
+//        builder.enableLiveView(true);
+//
+//        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+//
+//        builder.setAutoStopLiveView(false);
+//
+//        builder.addProcessor(aprilTag);
+//
+//        visionPortal = builder.build();
+//
+//        visionPortal.setProcessorEnabled(aprilTag, true);
+//
+//    }
+//    private void telemetryAprilTag() {
+//
+//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//        telemetry.addData("# AprilTags Detected", currentDetections.size());
+//
+//        for (AprilTagDetection detection : currentDetections) {
+//            if (detection.metadata != null) {
+//                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+//                if (!detection.metadata.name.contains("Obelisk")) {
+//                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
+////                            detection.robotPose.getPosition().x,
+////                            detection.robotPose.getPosition().y,
+////                            detection.robotPose.getPosition().z));
+//                            detection.ftcPose.x,
+//                            detection.ftcPose.y,
+//                            detection.ftcPose.z));
+//                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
+//                            detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
+//                            detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
+//                            detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
+//                }
+//            } else {
+//                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+//                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+//            }
+//        }
+//
+//        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+//        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+//
+//    }
 }
