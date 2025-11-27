@@ -31,7 +31,7 @@ public class ManualDrive extends LinearOpMode{
     private DcMotor intake = null;
 
     //control variables
-    public static final double SHOOTER_INTERVAL = 0.2;
+    public static final double SHOOTER_INTERVAL = 0.1;
 
     //apriltag/camera variables
 //    private static final boolean USE_WEBCAM = true;
@@ -48,6 +48,7 @@ public class ManualDrive extends LinearOpMode{
     public void runOpMode() {
 
 //        initAprilTag();
+        String feeder = "Off";
         //shooter variables
         boolean shooterToggle = false;
         double shooterPower = 0;
@@ -146,12 +147,16 @@ public class ManualDrive extends LinearOpMode{
             //intake controls
             if (gamepad1.dpad_down){
                 intake.setPower(-0.5);
+                feeder = "on";
             }else if (gamepad1.dpad_up){
                 intake.setPower(0.5);
+                feeder = "reverse";
             }else if (gamepad1.dpad_right){
                 intake.setPower(0);
+                feeder = "off";
             }else if (gamepad1.dpad_left){
                 intake.setPower(1);
+                feeder = "reverse 2x";
             };
 
             //telemetry
@@ -160,6 +165,7 @@ public class ManualDrive extends LinearOpMode{
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.addData("Shooter power", shooterPower);
+            telemetry.addData("Feeder", feeder);
             telemetry.update();
         }
     }
