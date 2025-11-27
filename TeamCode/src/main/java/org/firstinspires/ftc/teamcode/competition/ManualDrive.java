@@ -49,6 +49,8 @@ public class ManualDrive extends LinearOpMode{
 
 //        initAprilTag();
         String feeder = "Off";
+        boolean reversetoggle = false;
+        boolean reversed = false;
         //shooter variables
         boolean shooterToggle = false;
         double shooterPower = 0;
@@ -158,6 +160,25 @@ public class ManualDrive extends LinearOpMode{
                 intake.setPower(1);
                 feeder = "reverse 2x";
             };
+
+            if(gamepad1.a && !reversetoggle) {
+                reversetoggle = true;
+                if(reversed){
+                    frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+                    backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+                    frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+                    backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+                    reversed = false;
+                }else{
+                    frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+                    backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+                    frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+                    backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+                    reversed = true;
+                }
+            }else if(!gamepad1.a){
+                reversetoggle = false;
+            }
 
             //telemetry
 //            telemetryAprilTag();
