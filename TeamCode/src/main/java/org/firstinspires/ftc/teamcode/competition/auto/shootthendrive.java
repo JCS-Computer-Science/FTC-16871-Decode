@@ -41,7 +41,7 @@ public class shootthendrive extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        shooter.setPower(1);
+        shooter.setPower(0.9);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 4)) {
             telemetry.addData("shooter starting", "Leg 2: %4.1f S Elapsed", runtime.seconds());
@@ -62,7 +62,7 @@ public class shootthendrive extends LinearOpMode {
         backLeftDrive.setPower(0.5);
         backRightDrive.setPower(0.5);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2)) {
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("moving", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }

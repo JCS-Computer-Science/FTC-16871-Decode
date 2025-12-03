@@ -40,7 +40,7 @@ public class justdrive extends LinearOpMode {
         backLeftDrive.setPower(0.5);
         backRightDrive.setPower(0.5);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2)) {
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("moving", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
