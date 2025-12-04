@@ -34,20 +34,20 @@ public class ManualDrive extends LinearOpMode{
     public static final double SHOOTER_INTERVAL = 0.1;
 
     //apriltag/camera variables
-//    private static final boolean USE_WEBCAM = true;
-//    private Position cameraPosition = new Position(DistanceUnit.INCH,
-//            0, 0, 0, 0);
-//    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-//            0, -90, 0, 0);
-//    private AprilTagProcessor aprilTag;
-//    private VisionPortal visionPortal;
-//    public static final double AUTO_TURN = 0.3;
+    private static final boolean USE_WEBCAM = true;
+    private Position cameraPosition = new Position(DistanceUnit.INCH,
+            0, 0, 0, 0);
+    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+            0, -90, 0, 0);
+    private AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
+    public static final double AUTO_TURN = 0.2;
 
 
     @Override
     public void runOpMode() {
 
-//        initAprilTag();
+        initAprilTag();
         String feeder = "Off";
         boolean reversetoggle = false;
         boolean reversed = false;
@@ -83,24 +83,24 @@ public class ManualDrive extends LinearOpMode{
             double yaw     =  gamepad1.right_stick_x;
 
             //auto aim function, points towards certain apriltags within view
-//            if (gamepad1.a) {
-//                List<AprilTagDetection> detect = aprilTag.getDetections();
-//                for (AprilTagDetection dect : detect){
-//                    if (dect.metadata != null){
-//                        if (!dect.metadata.name.contains("Obelisk")){
-//                            if(dect.ftcPose.x > 0){
-//                                yaw = AUTO_TURN;
-//                                telemetry.addData("Auto Aim", "Turning right");
-//                            }else if(dect.ftcPose.x < 0){
-//                                yaw = -AUTO_TURN;
-//                                telemetry.addData("Auto Aim", "Turning left");
-//                            }
-//                        }
-//                    }else{
-//                        telemetry.addData("Auto Aim", "No target found");
-//                    }
-//                }
-//            }
+            if (gamepad1.a) {
+                List<AprilTagDetection> detect = aprilTag.getDetections();
+                for (AprilTagDetection dect : detect){
+                    if (dect.metadata != null){
+                        if (!dect.metadata.name.contains("Obelisk")){
+                            if(dect.ftcPose.x > -0.1){
+                                yaw = AUTO_TURN;
+                                telemetry.addData("Auto Aim", "Turning right");
+                            }else if(dect.ftcPose.x < 0.1){
+                                yaw = -AUTO_TURN;
+                                telemetry.addData("Auto Aim", "Turning left");
+                            }
+                        }
+                    }else{
+                        telemetry.addData("Auto Aim", "No target found");
+                    }
+                }
+            }
 
             //drive and turning calculations
             double frontLeftPower  = axial + lateral + yaw;
@@ -161,7 +161,7 @@ public class ManualDrive extends LinearOpMode{
                 feeder = "reverse 2x";
             };
 
-            if(gamepad1.a && !reversetoggle) {
+            if(gamepad1.b && !reversetoggle) {
                 reversetoggle = true;
                 if(reversed){
                     frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -191,71 +191,71 @@ public class ManualDrive extends LinearOpMode{
         }
     }
 
-    //april tag functions
-//    private void initAprilTag() {
-//
-//        aprilTag = new AprilTagProcessor.Builder()
-//
-//                .setDrawAxes(false)
-//                .setDrawCubeProjection(false)
-//                .setDrawTagOutline(true)
-//                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-//                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-//                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-//                .setCameraPose(cameraPosition, cameraOrientation)
-//
-//                .build();
-//
-//        VisionPortal.Builder builder = new VisionPortal.Builder();
-//
-//        if (USE_WEBCAM) {
-//            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-//        } else {
-//            builder.setCamera(BuiltinCameraDirection.BACK);
-//        }
-//
-//        builder.enableLiveView(true);
-//
-//        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-//
-//        builder.setAutoStopLiveView(false);
-//
-//        builder.addProcessor(aprilTag);
-//
-//        visionPortal = builder.build();
-//
-//        visionPortal.setProcessorEnabled(aprilTag, true);
-//
-//    }
-//    private void telemetryAprilTag() {
-//
-//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-//        telemetry.addData("# AprilTags Detected", currentDetections.size());
-//
-//        for (AprilTagDetection detection : currentDetections) {
-//            if (detection.metadata != null) {
-//                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-//                if (!detection.metadata.name.contains("Obelisk")) {
-//                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
-////                            detection.robotPose.getPosition().x,
-////                            detection.robotPose.getPosition().y,
-////                            detection.robotPose.getPosition().z));
-//                            detection.ftcPose.x,
-//                            detection.ftcPose.y,
-//                            detection.ftcPose.z));
-//                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
-//                            detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
-//                            detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
-//                            detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
-//                }
-//            } else {
-//                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-//                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-//            }
-//        }
-//
-//        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-//        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-//
-//    }
+//    april tag functions
+    private void initAprilTag() {
+
+        aprilTag = new AprilTagProcessor.Builder()
+
+                .setDrawAxes(false)
+                .setDrawCubeProjection(false)
+                .setDrawTagOutline(true)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .setCameraPose(cameraPosition, cameraOrientation)
+
+                .build();
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        if (USE_WEBCAM) {
+            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK);
+        }
+
+        builder.enableLiveView(true);
+
+        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
+        builder.setAutoStopLiveView(false);
+
+        builder.addProcessor(aprilTag);
+
+        visionPortal = builder.build();
+
+        visionPortal.setProcessorEnabled(aprilTag, true);
+
+    }
+    private void telemetryAprilTag() {
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                if (!detection.metadata.name.contains("Obelisk")) {
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
+//                            detection.robotPose.getPosition().x,
+//                            detection.robotPose.getPosition().y,
+//                            detection.robotPose.getPosition().z));
+                            detection.ftcPose.x,
+                            detection.ftcPose.y,
+                            detection.ftcPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
+                            detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
+                            detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
+                            detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
+                }
+            } else {
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
+        }
+
+        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+
+    }
 }
