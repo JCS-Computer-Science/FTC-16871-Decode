@@ -87,11 +87,12 @@ public class ManualDrive extends LinearOpMode{
                 List<AprilTagDetection> detect = aprilTag.getDetections();
                 for (AprilTagDetection dect : detect){
                     if (dect.metadata != null){
-                        if (!dect.metadata.name.contains("Obelisk")){
-                            if(dect.ftcPose.x > -0.1){
+                        if (dect.metadata.id == 20){
+                            //20 is blue, 24 is red
+                            if(dect.ftcPose.x > -0.3){
                                 yaw = AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning right");
-                            }else if(dect.ftcPose.x < 0.1){
+                            }else if(dect.ftcPose.x < 0.3){
                                 yaw = -AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning left");
                             }
@@ -161,27 +162,27 @@ public class ManualDrive extends LinearOpMode{
                 feeder = "reverse 2x";
             };
 
-            if(gamepad1.b && !reversetoggle) {
-                reversetoggle = true;
-                if(reversed){
-                    frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-                    backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-                    frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-                    backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-                    reversed = false;
-                }else{
-                    frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-                    backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-                    frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-                    backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-                    reversed = true;
-                }
-            }else if(!gamepad1.a){
-                reversetoggle = false;
-            }
+//            if(gamepad1.b && !reversetoggle) {
+//                reversetoggle = true;
+//                if(reversed){
+//                    frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+//                    backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+//                    frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+//                    backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+//                    reversed = false;
+//                }else{
+//                    frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+//                    backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+//                    frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+//                    backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+//                    reversed = true;
+//                }
+//            }else if(!gamepad1.a){
+//                reversetoggle = false;
+//            }
 
             //telemetry
-//            telemetryAprilTag();
+            telemetryAprilTag();
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
