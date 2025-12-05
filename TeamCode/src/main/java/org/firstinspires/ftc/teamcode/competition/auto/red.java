@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous(name = "BLUE AUTO", group = "competitive")
+@Autonomous(name = "RED AUTO", group = "competitive")
 public class red extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

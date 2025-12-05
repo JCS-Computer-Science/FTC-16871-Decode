@@ -85,15 +85,20 @@ public class blue extends LinearOpMode {
                         // Yes, we want to use this tag.
                         targetFound = true;
                         desiredTag = detection;
+                        telemetry.addData("Found", "Tag ID %d is desired", detection.id);
+                        telemetry.update();
                         break;  // don't look any further.
                     } else {
                         // This tag is in the library, but we do not want to track it right now.
                         telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                        telemetry.update();
                     }
                 } else {
                     // This tag is NOT in the library, so we don't have enough information to track to it.
                     telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                    telemetry.update();
                 }
+
             }
         }
         if (targetFound) {
@@ -104,6 +109,7 @@ public class blue extends LinearOpMode {
 
         }else{
             telemetry.addData("error", "apriltag not found");
+            telemetry.update();
         }
 
         double frontLeftPower    =  -turn;
