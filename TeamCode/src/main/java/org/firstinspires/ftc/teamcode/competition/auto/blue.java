@@ -39,14 +39,12 @@ public class blue extends LinearOpMode {
     private VisionPortal visionPortal;
     private AprilTagDetection desiredTag = null;
     private static final int DESIRED_TAG_ID = 20;
+    private static final double AUTO_TURN = 0.1;
 
-    final double TURN_GAIN   =  0.01  ;
-    final double MAX_AUTO_TURN  = 0.3;
 
     @Override
     public void runOpMode(){
         boolean targetFound = false;
-        double  turn            = 0;
         //hardware assigning, make sure device names in here match the ones in config
         frontLeftDrive = hardwareMap.get(DcMotor.class, "frontL");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backL");
@@ -71,70 +69,35 @@ public class blue extends LinearOpMode {
 
         shooter.setPower(0.85);
         runtime.reset();
-        while (opModeIsActive()) {
-            targetFound = false;
-            desiredTag  = null;
-
-            // Step through the list of detected tags and look for a matching tag
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-                        telemetry.addData("Found", "Tag ID %d is desired", detection.id);
-                        telemetry.update();
-                        break;  // don't look any further.
-                    } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                        telemetry.update();
+        boolean targetfound = false;
+        while (opModeIsActive() && !targetfound) {
+            List<AprilTagDetection> detect = aprilTag.getDetections();
+            for (AprilTagDetection dect : detect){
+                if (dect.metadata != null){
+                    if (dect.metadata.id == 20){
+                        //20 is blue, 24 is red
+                        if(dect.ftcPose.x > -0.2){
+                            frontLeftDrive.setPower(AUTO_TURN);
+                            frontRightDrive.setPower(-AUTO_TURN);
+                            backLeftDrive.setPower(AUTO_TURN);
+                            backRightDrive.setPower(-AUTO_TURN);
+                            telemetry.addData("Auto Aim", "Turning right");
+                        }else if(dect.ftcPose.x < 0.4){
+                            frontLeftDrive.setPower(-AUTO_TURN);
+                            frontRightDrive.setPower(AUTO_TURN);
+                            backLeftDrive.setPower(-AUTO_TURN);
+                            backRightDrive.setPower(AUTO_TURN);
+                            telemetry.addData("Auto Aim", "Turning left");
+                        }else{
+                            targetfound = true;
+                            break;
+                        }
                     }
-                } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                    telemetry.update();
+                }else{
+                    telemetry.addData("Auto Aim", "No target found");
                 }
-
             }
         }
-        if (targetFound) {
-
-            double  headingError    = desiredTag.ftcPose.bearing;
-
-            turn  = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-
-        }else{
-            telemetry.addData("error", "apriltag not found");
-            telemetry.update();
-        }
-
-        double frontLeftPower    =  -turn;
-        double frontRightPower   =  turn;
-        double backLeftPower     =  -turn;
-        double backRightPower    =  turn;
-
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
-
-        if (max > 1.0) {
-            frontLeftPower /= max;
-            frontRightPower /= max;
-            backLeftPower /= max;
-            backRightPower /= max;
-        }
-
-        // Send powers to the wheels.
-        frontLeftDrive.setPower(frontLeftPower);
-        frontRightDrive.setPower(frontRightPower);
-        backLeftDrive.setPower(backLeftPower);
-        backRightDrive.setPower(backRightPower);
-
 
         intake.setPower(-0.5);
         runtime.reset();

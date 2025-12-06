@@ -95,6 +95,7 @@ public class red extends LinearOpMode {
                     telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                 }
             }
+            break;
         }
         if (targetFound) {
 

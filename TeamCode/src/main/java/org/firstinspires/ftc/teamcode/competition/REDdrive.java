@@ -31,7 +31,7 @@ public class REDdrive extends LinearOpMode{
     private DcMotor intake = null;
 
     //control variables
-    public static final double SHOOTER_INTERVAL = 0.1;
+    public static final double SHOOTER_INTERVAL = 0.05;
 
     //apriltag/camera variables
     private static final boolean USE_WEBCAM = true;
@@ -41,7 +41,7 @@ public class REDdrive extends LinearOpMode{
             0, -90, 0, 0);
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-    public static final double AUTO_TURN = 0.2;
+    public static final double AUTO_TURN = 0.1;
 
 
     @Override
@@ -89,10 +89,10 @@ public class REDdrive extends LinearOpMode{
                     if (dect.metadata != null){
                         if (dect.metadata.id == 24){
                             //20 is blue, 24 is red
-                            if(dect.ftcPose.x > -0.3){
+                            if(dect.ftcPose.x > -0.2){
                                 yaw = AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning right");
-                            }else if(dect.ftcPose.x < 0.3){
+                            }else if(dect.ftcPose.x < 0.4){
                                 yaw = -AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning left");
                             }
@@ -139,7 +139,7 @@ public class REDdrive extends LinearOpMode{
             }
             //shooter controls to go right to zero or max
             if (gamepad1.right_trigger > 0.5){
-                shooterPower = 1;
+                shooterPower = 0.75;
                 shooter.setPower(shooterPower);
             }
             if (gamepad1.left_trigger > 0.5){
