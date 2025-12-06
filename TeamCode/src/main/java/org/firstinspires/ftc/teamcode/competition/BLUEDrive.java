@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.competition;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -18,8 +17,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
-@TeleOp(name="manual drive", group="competition")
-public class ManualDrive extends LinearOpMode{
+@TeleOp(name="BLUE drive", group="competition")
+public class BLUEDrive extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
     //hardware variables
