@@ -30,7 +30,7 @@ public class BLUEDrive extends LinearOpMode{
     private DcMotor intake = null;
 
     //control variables
-    public static final double SHOOTER_INTERVAL = 0.05;
+    public static final double SHOOTER_INTERVAL = 200;
 
     //apriltag/camera variables
     private static final boolean USE_WEBCAM = true;
@@ -52,7 +52,7 @@ public class BLUEDrive extends LinearOpMode{
         boolean reversed = false;
         //shooter variables
         boolean shooterToggle = false;
-        double shooterPower = 0;
+        double shooterVelocity = 0;
         //hardware assigning, make sure device names in here match the ones in config
         frontLeftDrive = hardwareMap.get(DcMotor.class, "frontL");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backL");
@@ -67,6 +67,8 @@ public class BLUEDrive extends LinearOpMode{
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         //direction of shooter
         shooter.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -125,25 +127,25 @@ public class BLUEDrive extends LinearOpMode{
             backRightDrive.setPower(backRightPower);
 
             //shooter controls, allows for precise power setting mid match
-            if (gamepad1.right_bumper && !shooterToggle && shooterPower < 1) {
-                shooterPower += SHOOTER_INTERVAL;
-                shooter.setPower(shooterPower);
+            if (gamepad1.right_bumper && !shooterToggle && shooterVelocity < 6000) {
+                shooterVelocity += SHOOTER_INTERVAL;
+                shooter.setPower(shooterVelocity);
                 shooterToggle = true;
-            } else if (gamepad1.left_bumper && !shooterToggle && shooterPower > -0.2) {
-                shooterPower -= SHOOTER_INTERVAL;
-                shooter.setPower(shooterPower);
+            } else if (gamepad1.left_bumper && !shooterToggle && shooterVelocity > -0.2) {
+                shooterVelocity -= SHOOTER_INTERVAL;
+                shooter.setPower(shooterVelocity);
                 shooterToggle = true;
             } else if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                 shooterToggle = false;
             }
             //shooter controls to go right to zero or max
             if (gamepad1.right_trigger > 0.5){
-                shooterPower = 0.75;
-                shooter.setPower(shooterPower);
+                shooterVelocity = 6000;
+                shooter.setPower(shooterVelocity);
             }
             if (gamepad1.left_trigger > 0.5){
-                shooterPower = 0;
-                shooter.setPower(shooterPower);
+                shooterVelocity = 0;
+                shooter.setPower(shooterVelocity);
             }
 
             //intake controls
@@ -185,7 +187,7 @@ public class BLUEDrive extends LinearOpMode{
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Shooter power", shooterPower);
+            telemetry.addData("Shooter power", shooterVelocity);
             telemetry.addData("Feeder", feeder);
             telemetry.update();
         }
