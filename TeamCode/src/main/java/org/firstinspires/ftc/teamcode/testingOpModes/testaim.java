@@ -18,8 +18,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous(name = "BLUE AUTO", group = "testing")
-public class blue extends LinearOpMode {
+@Autonomous(name = "aim", group = "testing")
+public class testaim extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     //hardware variables
@@ -27,8 +27,6 @@ public class blue extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor shooter = null;
-    private DcMotor intake = null;
     private static final boolean USE_WEBCAM = true;
 
 
@@ -42,6 +40,8 @@ public class blue extends LinearOpMode {
     private static final int DESIRED_TAG_ID = 20;
     private static final double AUTO_TURN = 0.15;
 
+    private int checks = 0;
+
 
     @Override
     public void runOpMode(){
@@ -51,15 +51,11 @@ public class blue extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "backL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontR");
         backRightDrive = hardwareMap.get(DcMotor.class, "backR");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
-        intake = hardwareMap.get(DcMotor.class, "intake");
         //directions of wheels, may need to change directions to drive properly
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        //direction of shooter
-        shooter.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -68,7 +64,6 @@ public class blue extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        shooter.setPower(0.85);
         runtime.reset();
 
         while (opModeIsActive() && !targetFound) {
@@ -77,13 +72,15 @@ public class blue extends LinearOpMode {
                 if (dect.metadata != null) {
                     if (dect.metadata.id == DESIRED_TAG_ID) {
                         //20 is blue, 24 is red
-                        while (!targetFound) {
+                            checks++;
                             if (dect.ftcPose.x > 0.2) {
                                 frontLeftDrive.setPower(AUTO_TURN);
                                 frontRightDrive.setPower(-AUTO_TURN);
                                 backLeftDrive.setPower(AUTO_TURN);
                                 backRightDrive.setPower(-AUTO_TURN);
                                 telemetry.addData("Auto Aim", "Turning right");
+                                telemetry.addData("Checks", checks);
+                                telemetryAprilTag();
                                 telemetry.update();
                             }
                             if (dect.ftcPose.x < -0.4) {
@@ -92,46 +89,26 @@ public class blue extends LinearOpMode {
                                 backLeftDrive.setPower(-AUTO_TURN);
                                 backRightDrive.setPower(AUTO_TURN);
                                 telemetry.addData("Auto Aim", "Turning left");
+                                telemetry.addData("Checks", checks);
+                                telemetryAprilTag();
                                 telemetry.update();
                             }
-                            if (dect.ftcPose.x > -0.2 && dect.ftcPose.x < 0.4){
+                            if (dect.ftcPose.x > -0.5 && dect.ftcPose.x < 0.2){
                                 targetFound = true;
                                 frontLeftDrive.setPower(0);
                                 frontRightDrive.setPower(0);
                                 backLeftDrive.setPower(0);
                                 backRightDrive.setPower(0);
                             }
-                        }
-                        break;
                     }
                 }
             }
             telemetry.addData("Auto Aim", "No target found");
+            telemetry.update();
             break;
         }
-
-        intake.setPower(-0.5);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 7)) {
-            telemetry.addData("shooting", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        shooter.setPower(0);
-        intake.setPower(0);
-        frontLeftDrive.setPower(0.5);
-        frontRightDrive.setPower(0.5);
-        backLeftDrive.setPower(0.5);
-        backRightDrive.setPower(0.5);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1)) {
-            telemetry.addData("moving", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        frontLeftDrive.setPower(0);
-        frontRightDrive.setPower(0);
-        backLeftDrive.setPower(0);
-        backRightDrive.setPower(0);
+        telemetry.addData("Finished", "AAAAAAAAAAA");
+        telemetry.update();
     }
     private void initAprilTag() {
 
