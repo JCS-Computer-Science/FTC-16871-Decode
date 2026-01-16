@@ -89,10 +89,10 @@ public class REDdrive extends LinearOpMode{
                     if (dect.metadata != null){
                         if (dect.metadata.id == 24){
                             //20 is blue, 24 is red
-                            if(dect.ftcPose.x > -0.2){
+                            if(dect.ftcPose.x > -4){
                                 yaw = AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning right");
-                            }else if(dect.ftcPose.x < 0.4){
+                            }else if(dect.ftcPose.x < 2){
                                 yaw = -AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning left");
                             }

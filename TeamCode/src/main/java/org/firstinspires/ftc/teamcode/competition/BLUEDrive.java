@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -26,11 +27,11 @@ public class BLUEDrive extends LinearOpMode{
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor shooter = null;
+    private DcMotorEx shooter = null;
     private DcMotor intake = null;
 
     //control variables
-    public static final double SHOOTER_INTERVAL = 200;
+    public static final double SHOOTER_INTERVAL = 100;
 
     //apriltag/camera variables
     private static final boolean USE_WEBCAM = true;
@@ -58,7 +59,7 @@ public class BLUEDrive extends LinearOpMode{
         backLeftDrive = hardwareMap.get(DcMotor.class, "backL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontR");
         backRightDrive = hardwareMap.get(DcMotor.class, "backR");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         intake = hardwareMap.get(DcMotor.class, "intake");
         //directions of wheels, may need to change directions to drive properly
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -90,10 +91,10 @@ public class BLUEDrive extends LinearOpMode{
                     if (dect.metadata != null){
                         if (dect.metadata.id == 20){
                             //20 is blue, 24 is red
-                            if(dect.ftcPose.x > -0.2){
+                            if(dect.ftcPose.x > -4){
                                 yaw = AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning right");
-                            }else if(dect.ftcPose.x < 0.4){
+                            }else if(dect.ftcPose.x < 2){
                                 yaw = -AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning left");
                             }
@@ -127,25 +128,25 @@ public class BLUEDrive extends LinearOpMode{
             backRightDrive.setPower(backRightPower);
 
             //shooter controls, allows for precise power setting mid match
-            if (gamepad1.right_bumper && !shooterToggle && shooterVelocity < 6000) {
+            if (gamepad1.right_bumper && !shooterToggle && shooterVelocity < 2800) {
                 shooterVelocity += SHOOTER_INTERVAL;
-                shooter.setPower(shooterVelocity);
+                shooter.setVelocity(shooterVelocity);
                 shooterToggle = true;
-            } else if (gamepad1.left_bumper && !shooterToggle && shooterVelocity > -0.2) {
+            } else if (gamepad1.left_bumper && !shooterToggle && shooterVelocity > -100) {
                 shooterVelocity -= SHOOTER_INTERVAL;
-                shooter.setPower(shooterVelocity);
+                shooter.setVelocity(shooterVelocity);
                 shooterToggle = true;
             } else if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                 shooterToggle = false;
             }
             //shooter controls to go right to zero or max
             if (gamepad1.right_trigger > 0.5){
-                shooterVelocity = 6000;
-                shooter.setPower(shooterVelocity);
+                shooterVelocity = 36000;
+                shooter.setVelocity(shooterVelocity);
             }
             if (gamepad1.left_trigger > 0.5){
                 shooterVelocity = 0;
-                shooter.setPower(shooterVelocity);
+                shooter.setVelocity(shooterVelocity);
             }
 
             //intake controls
@@ -187,7 +188,8 @@ public class BLUEDrive extends LinearOpMode{
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Shooter power", shooterVelocity);
+            telemetry.addData("Shooter target velocity", shooterVelocity);
+            telemetry.addData("Shooter current velocity", shooter.getVelocity());
             telemetry.addData("Feeder", feeder);
             telemetry.update();
         }

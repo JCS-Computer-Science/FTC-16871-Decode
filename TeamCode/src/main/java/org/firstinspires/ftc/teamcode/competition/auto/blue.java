@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.testingOpModes;
+package org.firstinspires.ftc.teamcode.competition.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous(name = "BLUE AUTO", group = "testing")
+@Autonomous(name = "BLUE AUTO", group = "competitive")
 public class blue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -42,6 +42,8 @@ public class blue extends LinearOpMode {
     private static final int DESIRED_TAG_ID = 20;
     private static final double AUTO_TURN = 0.15;
 
+    private int checks = 0;
+
 
     @Override
     public void runOpMode(){
@@ -61,6 +63,7 @@ public class blue extends LinearOpMode {
         //direction of shooter
         shooter.setDirection(DcMotor.Direction.REVERSE);
 
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -77,37 +80,41 @@ public class blue extends LinearOpMode {
                 if (dect.metadata != null) {
                     if (dect.metadata.id == DESIRED_TAG_ID) {
                         //20 is blue, 24 is red
-                        while (!targetFound) {
-                            if (dect.ftcPose.x > 0.2) {
-                                frontLeftDrive.setPower(AUTO_TURN);
-                                frontRightDrive.setPower(-AUTO_TURN);
-                                backLeftDrive.setPower(AUTO_TURN);
-                                backRightDrive.setPower(-AUTO_TURN);
-                                telemetry.addData("Auto Aim", "Turning right");
-                                telemetry.update();
-                            }
-                            if (dect.ftcPose.x < -0.4) {
-                                frontLeftDrive.setPower(-AUTO_TURN);
-                                frontRightDrive.setPower(AUTO_TURN);
-                                backLeftDrive.setPower(-AUTO_TURN);
-                                backRightDrive.setPower(AUTO_TURN);
-                                telemetry.addData("Auto Aim", "Turning left");
-                                telemetry.update();
-                            }
-                            if (dect.ftcPose.x > -0.2 && dect.ftcPose.x < 0.4){
-                                targetFound = true;
-                                frontLeftDrive.setPower(0);
-                                frontRightDrive.setPower(0);
-                                backLeftDrive.setPower(0);
-                                backRightDrive.setPower(0);
-                            }
+                        checks++;
+                        if (dect.ftcPose.x > 2) {
+                            frontLeftDrive.setPower(AUTO_TURN);
+                            frontRightDrive.setPower(-AUTO_TURN);
+                            backLeftDrive.setPower(AUTO_TURN);
+                            backRightDrive.setPower(-AUTO_TURN);
+                            telemetry.addData("Auto Aim", "Turning right");
+                            telemetry.addData("Checks", checks);
+                            telemetryAprilTag();
+                            telemetry.update();
                         }
-                        break;
+                        if (dect.ftcPose.x < -4) {
+                            frontLeftDrive.setPower(-AUTO_TURN);
+                            frontRightDrive.setPower(AUTO_TURN);
+                            backLeftDrive.setPower(-AUTO_TURN);
+                            backRightDrive.setPower(AUTO_TURN);
+                            telemetry.addData("Auto Aim", "Turning left");
+                            telemetry.addData("Checks", checks);
+                            telemetryAprilTag();
+                            telemetry.update();
+                        }
+                        if (dect.ftcPose.x > -4&& dect.ftcPose.x < 2){
+                            targetFound = true;
+                            frontLeftDrive.setPower(0);
+                            frontRightDrive.setPower(0);
+                            backLeftDrive.setPower(0);
+                            backRightDrive.setPower(0);
+                        }
                     }
-                }
             }
             telemetry.addData("Auto Aim", "No target found");
-            break;
+            telemetry.update();
+        }
+        telemetry.addData("Finished", "AAAAAAAAAAA");
+        telemetry.update();
         }
 
         intake.setPower(-0.5);

@@ -73,7 +73,7 @@ public class testaim extends LinearOpMode {
                     if (dect.metadata.id == DESIRED_TAG_ID) {
                         //20 is blue, 24 is red
                             checks++;
-                            if (dect.ftcPose.x > 0.2) {
+                            if (dect.ftcPose.x > 2) {
                                 frontLeftDrive.setPower(AUTO_TURN);
                                 frontRightDrive.setPower(-AUTO_TURN);
                                 backLeftDrive.setPower(AUTO_TURN);
@@ -83,7 +83,7 @@ public class testaim extends LinearOpMode {
                                 telemetryAprilTag();
                                 telemetry.update();
                             }
-                            if (dect.ftcPose.x < -0.4) {
+                            if (dect.ftcPose.x < -4) {
                                 frontLeftDrive.setPower(-AUTO_TURN);
                                 frontRightDrive.setPower(AUTO_TURN);
                                 backLeftDrive.setPower(-AUTO_TURN);
@@ -93,7 +93,7 @@ public class testaim extends LinearOpMode {
                                 telemetryAprilTag();
                                 telemetry.update();
                             }
-                            if (dect.ftcPose.x > -0.5 && dect.ftcPose.x < 0.2){
+                            if (dect.ftcPose.x > -4&& dect.ftcPose.x < 2){
                                 targetFound = true;
                                 frontLeftDrive.setPower(0);
                                 frontRightDrive.setPower(0);
@@ -105,7 +105,6 @@ public class testaim extends LinearOpMode {
             }
             telemetry.addData("Auto Aim", "No target found");
             telemetry.update();
-            break;
         }
         telemetry.addData("Finished", "AAAAAAAAAAA");
         telemetry.update();
