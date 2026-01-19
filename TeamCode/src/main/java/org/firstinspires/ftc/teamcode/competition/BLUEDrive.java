@@ -31,7 +31,7 @@ public class BLUEDrive extends LinearOpMode{
     private DcMotor intake = null;
 
     //control variables
-    public static final double SHOOTER_INTERVAL = 100;
+    public static final double SHOOTER_INTERVAL = 28;
 
     //apriltag/camera variables
     private static final boolean USE_WEBCAM = true;
@@ -141,7 +141,7 @@ public class BLUEDrive extends LinearOpMode{
             }
             //shooter controls to go right to zero or max
             if (gamepad1.right_trigger > 0.5){
-                shooterVelocity = 36000;
+                shooterVelocity = 2800;
                 shooter.setVelocity(shooterVelocity);
             }
             if (gamepad1.left_trigger > 0.5){
