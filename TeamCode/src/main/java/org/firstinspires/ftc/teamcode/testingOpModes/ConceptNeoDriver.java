@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.NeoDriver;
 //@Disabled
 public class ConceptNeoDriver extends LinearOpMode {
     private NeoDriver LED;
-    // Define constants for the LED strip
     private static final int NUM_PIXELS =8 ; // The total number of pixels on your strip
 
     @Override

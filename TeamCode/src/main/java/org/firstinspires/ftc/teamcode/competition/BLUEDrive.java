@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.NeoDriver;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -43,6 +44,10 @@ public class BLUEDrive extends LinearOpMode{
     private VisionPortal visionPortal;
     public static final double AUTO_TURN = 0.1;
 
+    //LED
+    private NeoDriver LED;
+    private static final int NUM_PIXELS =40 ;
+
 
     @Override
     public void runOpMode() {
@@ -70,6 +75,11 @@ public class BLUEDrive extends LinearOpMode{
         shooter.setDirection(DcMotor.Direction.REVERSE);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //
+        LED = hardwareMap.get(NeoDriver.class, "led");
+        LED.initializeNeoPixels();
+        LED.setPixelRangeColor(0, NUM_PIXELS, NeoDriver.COLOR.BLACK);
+        LED.show();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -91,10 +101,10 @@ public class BLUEDrive extends LinearOpMode{
                     if (dect.metadata != null){
                         if (dect.metadata.id == 20){
                             //20 is blue, 24 is red
-                            if(dect.ftcPose.x > -4){
+                            if(dect.ftcPose.x > -5){
                                 yaw = AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning right");
-                            }else if(dect.ftcPose.x < 2){
+                            }else if(dect.ftcPose.x < 3){
                                 yaw = -AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning left");
                             }
@@ -132,7 +142,7 @@ public class BLUEDrive extends LinearOpMode{
                 shooterVelocity += SHOOTER_INTERVAL;
                 shooter.setVelocity(shooterVelocity);
                 shooterToggle = true;
-            } else if (gamepad1.left_bumper && !shooterToggle && shooterVelocity > -100) {
+            } else if (gamepad1.left_bumper && !shooterToggle && shooterVelocity > -280) {
                 shooterVelocity -= SHOOTER_INTERVAL;
                 shooter.setVelocity(shooterVelocity);
                 shooterToggle = true;
@@ -141,12 +151,27 @@ public class BLUEDrive extends LinearOpMode{
             }
             //shooter controls to go right to zero or max
             if (gamepad1.right_trigger > 0.5){
-                shooterVelocity = 2800;
+                shooterVelocity = 1876;
                 shooter.setVelocity(shooterVelocity);
             }
             if (gamepad1.left_trigger > 0.5){
                 shooterVelocity = 0;
                 shooter.setVelocity(shooterVelocity);
+            }
+            if (gamepad1.b){
+                shooterVelocity = 1456;
+                shooter.setVelocity(shooterVelocity);
+            }
+            double current = shooter.getVelocity();
+            double diff = shooterVelocity - current;
+            if (diff > -60 && diff < 60 && shooterVelocity != 0){
+                LED.setPixelRangeColor(0, NUM_PIXELS, NeoDriver.COLOR.MINT);
+                LED.show();
+                telemetry.addData("Speed", "yes");
+            }else{
+                LED.setPixelRangeColor(0, NUM_PIXELS, NeoDriver.COLOR.BLACK);
+                LED.show();
+                telemetry.addData("Speed", "no");
             }
 
             //intake controls
