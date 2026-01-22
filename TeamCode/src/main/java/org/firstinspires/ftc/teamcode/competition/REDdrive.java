@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.competition;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.NeoDriver;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -27,11 +28,11 @@ public class REDdrive extends LinearOpMode{
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor shooter = null;
+    private DcMotorEx shooter = null;
     private DcMotor intake = null;
 
     //control variables
-    public static final double SHOOTER_INTERVAL = 0.05;
+    public static final double SHOOTER_INTERVAL = 28;
 
     //apriltag/camera variables
     private static final boolean USE_WEBCAM = true;
@@ -43,6 +44,10 @@ public class REDdrive extends LinearOpMode{
     private VisionPortal visionPortal;
     public static final double AUTO_TURN = 0.1;
 
+    //LED
+    private NeoDriver LED;
+    private static final int NUM_PIXELS =40 ;
+
 
     @Override
     public void runOpMode() {
@@ -53,13 +58,13 @@ public class REDdrive extends LinearOpMode{
         boolean reversed = false;
         //shooter variables
         boolean shooterToggle = false;
-        double shooterPower = 0;
+        double shooterVelocity = 0;
         //hardware assigning, make sure device names in here match the ones in config
         frontLeftDrive = hardwareMap.get(DcMotor.class, "frontL");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontR");
         backRightDrive = hardwareMap.get(DcMotor.class, "backR");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         intake = hardwareMap.get(DcMotor.class, "intake");
         //directions of wheels, may need to change directions to drive properly
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -68,6 +73,13 @@ public class REDdrive extends LinearOpMode{
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         //direction of shooter
         shooter.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //
+        LED = hardwareMap.get(NeoDriver.class, "led");
+        LED.initializeNeoPixels();
+        LED.setPixelRangeColor(0, NUM_PIXELS, NeoDriver.COLOR.BLACK);
+        LED.show();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -89,10 +101,10 @@ public class REDdrive extends LinearOpMode{
                     if (dect.metadata != null){
                         if (dect.metadata.id == 24){
                             //20 is blue, 24 is red
-                            if(dect.ftcPose.x > -4){
+                            if(dect.ftcPose.x > -5){
                                 yaw = AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning right");
-                            }else if(dect.ftcPose.x < 2){
+                            }else if(dect.ftcPose.x < 3){
                                 yaw = -AUTO_TURN;
                                 telemetry.addData("Auto Aim", "Turning left");
                             }
@@ -126,25 +138,40 @@ public class REDdrive extends LinearOpMode{
             backRightDrive.setPower(backRightPower);
 
             //shooter controls, allows for precise power setting mid match
-            if (gamepad1.right_bumper && !shooterToggle && shooterPower < 1) {
-                shooterPower += SHOOTER_INTERVAL;
-                shooter.setPower(shooterPower);
+            if (gamepad1.right_bumper && !shooterToggle && shooterVelocity < 2800) {
+                shooterVelocity += SHOOTER_INTERVAL;
+                shooter.setVelocity(shooterVelocity);
                 shooterToggle = true;
-            } else if (gamepad1.left_bumper && !shooterToggle && shooterPower > -0.2) {
-                shooterPower -= SHOOTER_INTERVAL;
-                shooter.setPower(shooterPower);
+            } else if (gamepad1.left_bumper && !shooterToggle && shooterVelocity > -280) {
+                shooterVelocity -= SHOOTER_INTERVAL;
+                shooter.setVelocity(shooterVelocity);
                 shooterToggle = true;
             } else if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                 shooterToggle = false;
             }
             //shooter controls to go right to zero or max
             if (gamepad1.right_trigger > 0.5){
-                shooterPower = 0.75;
-                shooter.setPower(shooterPower);
+                shooterVelocity = 1876;
+                shooter.setVelocity(shooterVelocity);
             }
             if (gamepad1.left_trigger > 0.5){
-                shooterPower = 0;
-                shooter.setPower(shooterPower);
+                shooterVelocity = 0;
+                shooter.setVelocity(shooterVelocity);
+            }
+            if (gamepad1.b){
+                shooterVelocity = 1456;
+                shooter.setVelocity(shooterVelocity);
+            }
+            double current = shooter.getVelocity();
+            double diff = shooterVelocity - current;
+            if (diff > -60 && diff < 60 && shooterVelocity != 0){
+                LED.setPixelRangeColor(0, NUM_PIXELS, NeoDriver.COLOR.MINT);
+                LED.show();
+                telemetry.addData("Speed", "yes");
+            }else{
+                LED.setPixelRangeColor(0, NUM_PIXELS, NeoDriver.COLOR.BLACK);
+                LED.show();
+                telemetry.addData("Speed", "no");
             }
 
             //intake controls
@@ -186,7 +213,8 @@ public class REDdrive extends LinearOpMode{
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Shooter power", shooterPower);
+            telemetry.addData("Shooter target velocity", shooterVelocity);
+            telemetry.addData("Shooter current velocity", shooter.getVelocity());
             telemetry.addData("Feeder", feeder);
             telemetry.update();
         }
