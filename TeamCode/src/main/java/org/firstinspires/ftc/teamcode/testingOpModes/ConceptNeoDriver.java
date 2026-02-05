@@ -8,6 +8,7 @@ import android.graphics.Color;
 
 import org.firstinspires.ftc.teamcode.NeoDriver;
 
+@Disabled
 @TeleOp(name="Concept: NeoDriver", group = "Concept")
 //@Disabled
 public class ConceptNeoDriver extends LinearOpMode {

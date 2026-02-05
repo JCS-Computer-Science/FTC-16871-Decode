@@ -39,7 +39,7 @@ public class red extends LinearOpMode {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     private AprilTagDetection desiredTag = null;
-    private static final int DESIRED_TAG_ID = 24;
+    private static final int DESIRED_TAG_ID = 20;
     private static final double AUTO_TURN = 0.15;
 
     private int checks = 0;
@@ -81,7 +81,7 @@ public class red extends LinearOpMode {
                     if (dect.metadata.id == DESIRED_TAG_ID) {
                         //20 is blue, 24 is red
                         checks++;
-                        if (dect.ftcPose.x > 2) {
+                        if (dect.ftcPose.x > 9.5) {
                             frontLeftDrive.setPower(AUTO_TURN);
                             frontRightDrive.setPower(-AUTO_TURN);
                             backLeftDrive.setPower(AUTO_TURN);
@@ -91,7 +91,7 @@ public class red extends LinearOpMode {
                             telemetryAprilTag();
                             telemetry.update();
                         }
-                        if (dect.ftcPose.x < -4) {
+                        if (dect.ftcPose.x < 6) {
                             frontLeftDrive.setPower(-AUTO_TURN);
                             frontRightDrive.setPower(AUTO_TURN);
                             backLeftDrive.setPower(-AUTO_TURN);
@@ -101,7 +101,7 @@ public class red extends LinearOpMode {
                             telemetryAprilTag();
                             telemetry.update();
                         }
-                        if (dect.ftcPose.x > -4&& dect.ftcPose.x < 2){
+                        if (dect.ftcPose.x > 6&& dect.ftcPose.x < 9.5){
                             targetFound = true;
                             frontLeftDrive.setPower(0);
                             frontRightDrive.setPower(0);
