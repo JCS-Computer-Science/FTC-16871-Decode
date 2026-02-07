@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -27,7 +28,7 @@ public class blue extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor shooter = null;
+    private DcMotorEx shooter = null;
     private DcMotor intake = null;
     private static final boolean USE_WEBCAM = true;
 
@@ -43,6 +44,7 @@ public class blue extends LinearOpMode {
     private static final double AUTO_TURN = 0.15;
 
     private int checks = 0;
+    private static final double TargVel = 1876;
 
 
     @Override
@@ -53,7 +55,7 @@ public class blue extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "backL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontR");
         backRightDrive = hardwareMap.get(DcMotor.class, "backR");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         intake = hardwareMap.get(DcMotor.class, "intake");
         //directions of wheels, may need to change directions to drive properly
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -62,6 +64,7 @@ public class blue extends LinearOpMode {
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         //direction of shooter
         shooter.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         telemetry.addData("Status", "Initialized");
@@ -71,7 +74,7 @@ public class blue extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        shooter.setPower(0.85);
+        shooter.setPower(TargVel);
         runtime.reset();
 
         while (opModeIsActive() && !targetFound) {
@@ -117,14 +120,24 @@ public class blue extends LinearOpMode {
         telemetry.update();
         }
 
-        intake.setPower(-0.5);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 7)) {
-            telemetry.addData("shooting", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
+        for (int i = 0; i < 3; i++){
+            runtime.reset();
+            intake.setPower(0);
+            boolean shot = false;
+            while(!shot){
+                double cur = shooter.getVelocity();
+                double diff = TargVel - cur;
+                while (runtime.seconds() < 2){
+                    telemetry.update();
+                }
+                if (diff >= -60 && diff <= 60){
+                    intake.setPower(-0.5);
+                    shot = true;
+                }
+            }
         }
 
-        shooter.setPower(0);
+        shooter.setVelocity(0);
         intake.setPower(0);
         frontLeftDrive.setPower(0.5);
         frontRightDrive.setPower(0.5);
